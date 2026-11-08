@@ -79,11 +79,11 @@ The real-corpus command was attempted. It correctly exited with: “Review at le
 
 ## Main implementation locations
 
-- `frontend/src/App.tsx`, `frontend/src/main.tsx`, `frontend/src/style.css`: React workspace and responsive styling.
-- `backend/app/api/workspace.py`: ingestion additions, source/figure APIs, chat/refinement, review, analytics, reports.
-- `backend/app/models/review.py`: additive source/figure/current-label/audit tables.
-- `backend/app/services/assets.py`, `clip.py`, `learning.py`: source files, extraction, frozen CLIP and classifier/acquisition.
-- `backend/app/main.py`, `services/ingestion.py`, `services/embeddings.py`, `backend/init_db.py`: integration with the existing backend.
+- `frontend/src/`: `App.tsx` (layout and shared state), `api.ts` (types and fetch helper), `pages/` (Search, Library, Review, Experiments), `dialogs/` (upload, preview, image text, source metadata), `components/` (sidebar, modal, research panel), `style.css`.
+- `backend/app/main.py`: app assembly, error rendering, search latency telemetry.
+- `backend/app/api/`: thin HTTP routers: `documents.py` (uploads, sources, figures, OCR), `search.py` (search and chat), `review.py` (queue, labels, analytics, reports), `research.py` (judgments, readiness, experiment runs).
+- `backend/app/services/`: `ingestion.py` (PDF/text/image ingest, chunking, image OCR indexing), `search.py` (keyword/semantic/hybrid/CLIP retrieval), `assets.py` (owned files, figure extraction), `embeddings.py`/`clip.py` (frozen encoders), `learning.py`/`evaluation.py` (classifier, acquisition, grouped splits), `ocr.py` (Tesseract).
+- `backend/app/models/`: documents/passages plus additive source/figure/label/audit/judgment tables; `backend/init_db.py` creates them.
 - `experiments/evaluate_retrieval.py`, `evaluate_active_learning.py`, `benchmark_index.py`: executable experiment runners.
 - `scripts/import_corpus.py`, `prepare_anomalies.py`: curation and controlled-candidate preparation.
 - `backend/tests/`: isolated PostgreSQL integration tests and experiment/model checks.

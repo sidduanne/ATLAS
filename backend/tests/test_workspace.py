@@ -46,10 +46,10 @@ def test_pdf_ingestion_persists_source_passages_and_figures(client, db):
 
 
 def test_transaction_failure_removes_database_and_files(client, db, monkeypatch):
-    import app.services.ingestion
+    import app.services.embeddings
     def broken(_):
         raise RuntimeError('test embedding failure')
-    monkeypatch.setattr(app.services.ingestion, 'embed_texts', broken)
+    monkeypatch.setattr(app.services.embeddings, 'embed_texts', broken)
     r = client.post('/api/v1/documents/upload', files={'file': ('paper.pdf', pdf_bytes(), 'application/pdf')})
     assert r.status_code == 500
     assert db.scalar(select(func.count()).select_from(Document)) == 0

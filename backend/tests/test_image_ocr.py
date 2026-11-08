@@ -24,7 +24,7 @@ def test_upload_indexes_ocr_preserves_resolution_and_is_idempotent(client, db, m
     def recognize(image):
         calls.append(image.size)
         return OCRResult('Quantum retrieval image text 4271', 'extracted')
-    monkeypatch.setattr('app.services.image_text.extract_image_text', recognize)
+    monkeypatch.setattr('app.services.ingestion.extract_image_text', recognize)
     r = client.post('/api/v1/documents/upload-image', files={'file':('scan.png',image_bytes((2400,400)))})
     assert r.status_code == 200, r.text
     result = r.json(); did = result['document_id']; fid = result['ocr']['figure_id']
@@ -44,22 +44,22 @@ def test_upload_indexes_ocr_preserves_resolution_and_is_idempotent(client, db, m
 
 
 def test_missing_ocr_retains_visual_search_and_can_retry(client, db, monkeypatch):
-    monkeypatch.setattr('app.services.image_text.extract_image_text', lambda image: OCRResult('', 'unavailable', 'Install Tesseract'))
+    monkeypatch.setattr('app.services.ingestion.extract_image_text', lambda image: OCRResult('', 'unavailable', 'Install Tesseract'))
     result = client.post('/api/v1/documents/upload-image', files={'file':('scan.png',image_bytes())}).json()
     assert result['ocr']['status'] == 'unavailable' and result['passages_created'] == 0
     fid = result['ocr']['figure_id']
     assert client.get('/api/v1/search/images?q=diagram').json()['results']
-    monkeypatch.setattr('app.services.image_text.extract_image_text', lambda image: OCRResult('Recovered text', 'extracted'))
+    monkeypatch.setattr('app.services.ingestion.extract_image_text', lambda image: OCRResult('Recovered text', 'extracted'))
     assert client.post(f'/api/v1/figures/{fid}/ocr').json()['status'] == 'unavailable'
     assert client.post(f'/api/v1/figures/{fid}/ocr?retry=true').json()['text'] == 'Recovered text'
     assert db.scalar(select(func.count()).select_from(Passage)) == 1
 
 
 def test_ocr_embedding_failure_rolls_back_image_and_files(client, db, monkeypatch):
-    monkeypatch.setattr('app.services.image_text.extract_image_text', lambda image: OCRResult('Recognized text', 'extracted'))
+    monkeypatch.setattr('app.services.ingestion.extract_image_text', lambda image: OCRResult('Recognized text', 'extracted'))
     def fail(_):
         raise RuntimeError('Embedding failed')
-    monkeypatch.setattr('app.api.workspace.embed_texts', fail)
+    monkeypatch.setattr('app.services.embeddings.embed_texts', fail)
     with pytest.raises(RuntimeError, match='Embedding failed'):
         client.post('/api/v1/documents/upload-image', files={'file':('scan.png',image_bytes())})
     for model in (Document, Figure, Passage, ImageText):

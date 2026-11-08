@@ -40,16 +40,13 @@ def db(tmp_path, monkeypatch):
 @pytest.fixture
 def client(db, monkeypatch):
     import app.main
-    import app.services.ingestion
-    import app.services.assets
-    import app.api.workspace
-    import app.api.hybrid_search
-    monkeypatch.setattr(app.services.ingestion, "embed_texts", lambda texts: [vector(t) for t in texts])
-    monkeypatch.setattr(app.api.workspace, "embed_texts", lambda texts: [vector(t) for t in texts])
-    monkeypatch.setattr(app.main, "embed_query", vector)
-    monkeypatch.setattr(app.api.hybrid_search, "embed_query", vector)
-    monkeypatch.setattr(app.services.assets, "embed_images", lambda images: [vector(str(i), 512) for i, _ in enumerate(images)])
-    monkeypatch.setattr(app.api.workspace, "embed_image_query", lambda q: vector("0", 512))
+    import app.services.clip
+    import app.services.embeddings
+    # Every caller goes through these two modules, so patching them replaces all encoders.
+    monkeypatch.setattr(app.services.embeddings, "embed_texts", lambda texts: [vector(t) for t in texts])
+    monkeypatch.setattr(app.services.embeddings, "embed_query", vector)
+    monkeypatch.setattr(app.services.clip, "embed_images", lambda images: [vector(str(i), 512) for i, _ in enumerate(images)])
+    monkeypatch.setattr(app.services.clip, "embed_image_query", lambda q: vector("0", 512))
     def session_override():
         try:
             yield db
