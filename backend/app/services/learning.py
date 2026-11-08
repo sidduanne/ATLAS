@@ -64,13 +64,14 @@ def grouped_split(y, groups, test_size=0.25):
     raise ValueError("Need more independently sourced labeled documents in each class for a group-disjoint held-out split")
 
 
-def learning_dataset(db, item_type):
+def learning_dataset(db, item_type, rows=None):
     """Embeddings, labels, item ids and leakage groups for the labeled items.
 
     Items from the same document share a group; documents containing an exact duplicate
     (normalized text or identical figure bytes) are merged into one group (union-find).
+    `rows` overrides the human Review labels with prebuilt (item, object-with-.label) pairs.
     """
-    rows = training_data(db, item_type)
+    rows = training_data(db, item_type) if rows is None else rows
     parents = {item.document_id: item.document_id for item, _ in rows}
 
     def root(i):
