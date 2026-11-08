@@ -32,3 +32,6 @@ frontend/dist/
 data/sources/
 data/models/
 *.tsbuildinfo
+
+# Database dumps
+*.dump

@@ -2,29 +2,32 @@
 
 A research prototype for technical PDF/text/image search, conversation-based search refinement, human anomaly tagging, and reproducible experiments. React + TypeScript, FastAPI, PostgreSQL + pgvector, frozen MiniLM text embeddings, and frozen CLIP image/text embeddings.
 
-## Run locally
+## Run locally (Linux / macOS)
 
-Python 3.12+, Node 22+, and PostgreSQL 17 with pgvector are recommended. The repository's existing `.venv` and `.env` work on this machine.
+Requirements: Docker (for PostgreSQL 17 + pgvector), Python 3.12+, Node 22+. Optional: Tesseract for OCR (`sudo apt install tesseract-ocr tesseract-ocr-eng` on Ubuntu, `brew install tesseract` on macOS).
 
 ```bash
-# From the repository root. Start only the database if it isn't running already.
+scripts/setup_local.sh   # once: creates .env, starts the db on 127.0.0.1:5433, venv (CPU PyTorch), schema, npm ci
+scripts/run_local.sh     # every time: db + backend (auto-reload) + Vite dev server; Ctrl+C stops
+```
+
+Open http://127.0.0.1:5173. API docs: http://127.0.0.1:8001/docs. Health check: http://127.0.0.1:8001/health. Optionally pre-download the models (~700 MB) with `PYTHONPATH=backend .venv/bin/python backend/download_models.py`.
+
+Manual equivalent of the setup script:
+
+```bash
+cp .env.example .env
 docker compose up -d db
 python3 -m venv .venv
+.venv/bin/python -m pip install --index-url https://download.pytorch.org/whl/cpu "torch>=2.2,<3"
 .venv/bin/python -m pip install -r backend/requirements-dev.txt
-cp .env.example .env  # Only for a fresh checkout; preserve your existing .env.
 PYTHONPATH=backend .venv/bin/python backend/init_db.py --indexes
 PYTHONPATH=backend .venv/bin/uvicorn app.main:app --reload --host 127.0.0.1 --port 8001
+# second terminal
+npm --prefix frontend ci && npm --prefix frontend run dev
 ```
 
-In a second terminal:
-
-```bash
-cd frontend
-npm ci
-npm run dev
-```
-
-Open http://127.0.0.1:5173. API docs: http://127.0.0.1:8001/docs. Health check: http://127.0.0.1:8001/health.
+A fresh database is empty. The original 91-document corpus lived in another machine's Docker volume. To move it, run `docker exec multimodal-retrieval-db pg_dump -U app_user -Fc multimodal_retrieval > atlas.dump` on the old machine and copy its `data/` directory. Then restore on this one with `docker exec -i multimodal-retrieval-db pg_restore -U app_user -d multimodal_retrieval --clean --if-exists < atlas.dump`. Alternatively, re-upload the PDFs through Library. `pdf_match_report.tsv` contains the old machine's macOS paths; regenerate it with `PYTHONPATH=backend .venv/bin/python scripts/match_pdfs.py` before using `restore_sources.py`.
 
 The first use of a model downloads weights if they are not cached. Text uses `sentence-transformers/all-MiniLM-L6-v2` (384 dimensions); images and image queries share `openai/clip-vit-base-patch32` (512 dimensions). Models are loaded lazily and frozen; review never fine-tunes either encoder. CLIP text queries are truncated to 77 tokens.
 
@@ -32,13 +35,39 @@ Scanned PDFs require Tesseract and English language data (`brew install tesserac
 
 `backend/requirements-tested.txt` records the exact installed environment used for verification. It is an environment snapshot, including development packages; the smaller `requirements.txt` declares supported ranges. `frontend/package-lock.json` fixes frontend dependency versions.
 
-## Run the full stack with Docker
+## Run the full stack with Docker (local)
 
 ```bash
 docker compose up --build
 ```
 
-Compose retains the existing `postgres_data` database volume, binds services to loopback, mounts `data/` for source files/models, and mounts `experiments/results/` for dashboard reports. It initializes missing tables and indexes without deleting existing documents. Stop an existing local backend/frontend first if ports 8001/5173 are in use. The full image build has not been exercised in this session; Compose configuration was validated.
+This uses `docker-compose.yml` plus the automatically loaded `docker-compose.override.yml`, which publishes the db (5433), the backend (8001) and the frontend (http://127.0.0.1:5173) on loopback only. Compose keeps the `postgres_data` volume, mounts `data/` for source files and models, and mounts `experiments/results/` for reports. It creates missing tables and indexes without deleting documents. Stop `scripts/run_local.sh` first, because both use ports 8001 and 5173.
+
+## Deploy on the web (any Linux VPS)
+
+The production stack is Caddy (automatic HTTPS) → nginx (frontend and login) → FastAPI → PostgreSQL. Only Caddy publishes ports (80/443); the database and backend are unreachable from outside. The app has no user accounts, so production **requires** an HTTP basic-auth login for the whole site. `/health` stays public for uptime checks.
+
+Server requirements: Docker with Compose v2, at least 4 GB RAM (both models load into memory, about 1.5 GB), and enough disk for images, models and documents (~10 GB plus your corpus). For HTTPS, point a domain's DNS A record at the server and open ports 80 and 443.
+
+```bash
+git clone <your-repo-url> atlas && cd atlas
+cp .env.example .env
+# Edit .env:
+#   POSTGRES_PASSWORD=$(openssl rand -hex 24)   and update DATABASE_URL to match (used only outside Docker)
+#   SITE_ADDRESS=atlas.example.com                (or :80 for plain HTTP by IP)
+#   BASIC_AUTH_USER=... BASIC_AUTH_PASSWORD=...
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+docker compose -f docker-compose.yml -f docker-compose.prod.yml exec backend python backend/download_models.py  # optional warm-up
+```
+
+- **Updating:** `git pull`, then run the same `up -d --build` command. Data in `data/` and the `postgres_data` volume persists.
+- **Logs:** run `docker compose -f docker-compose.yml -f docker-compose.prod.yml logs -f backend`.
+- **Backups:** dump the database with `docker exec multimodal-retrieval-db pg_dump -U app_user -Fc multimodal_retrieval > atlas.dump`, and copy `data/` and `experiments/results/`.
+- **Running scripts on the server:** use `docker compose ... exec backend python scripts/import_corpus.py ...`.
+- **GPU host:** set `TORCH_INDEX_URL=https://download.pytorch.org/whl/cu124` in `.env`. GPU access in containers also needs the NVIDIA container toolkit.
+- **Database password:** it is fixed when the volume is first created. Choose it before the first `up`.
+
+The backend deliberately runs a single Uvicorn worker, because experiment-job tracking and latency stats are process-local. Ingestion is synchronous, so large uploads hold a request open; the proxies allow up to 30 minutes and 500 MB. Free hosts without persistent disks or with under 2 GB RAM (e.g. Render free tier, Vercel) cannot run this stack.
 
 ## Use the application
 
@@ -115,7 +144,9 @@ npm --prefix frontend run build
 docker compose config --quiet
 ```
 
-The 12 tests cover transaction rollback, bulk partial failure, source/figure previews, legacy attachment, image/text upload, provenance, all retrieval methods, label updates/audit events, acquisition/cold start, modality isolation, metric definitions, group-disjoint equal-budget experiments, and real model inference. PostgreSQL tests create uniquely named temporary schemas and remove only those schemas afterward. They require a running pgvector-enabled database and a role permitted to create schemas. The real-model test may download model weights on a fresh machine.
+Run the tests against the local database only (`DATABASE_URL` in `.env`). They create and drop temporary schemas, which is safe, but they should not be pointed at a production server.
+
+The tests cover transaction rollback, bulk partial failure, source/figure previews, legacy attachment, image/text upload, provenance, all retrieval methods, label updates/audit events, acquisition/cold start, modality isolation, metric definitions, group-disjoint equal-budget experiments, and real model inference. PostgreSQL tests create uniquely named temporary schemas and remove only those schemas afterward. They require a running pgvector-enabled database and a role permitted to create schemas. The real-model test may download model weights on a fresh machine.
 
 ## Scope and remaining empirical work
 

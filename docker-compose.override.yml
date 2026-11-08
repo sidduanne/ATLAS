@@ -1,0 +1,12 @@
+# Local development ports (loaded automatically by `docker compose` unless -f is used).
+# Everything binds to loopback only, so nothing is reachable from other machines.
+services:
+  db:
+    ports:
+      - "127.0.0.1:5433:5432"
+  backend:
+    ports:
+      - "127.0.0.1:8001:8001"
+  frontend:
+    ports:
+      - "127.0.0.1:5173:80"

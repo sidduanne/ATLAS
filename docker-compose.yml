@@ -1,18 +1,20 @@
+# Base stack shared by local Docker runs and web deployment.
+# - Local:      docker compose up --build            (also loads docker-compose.override.yml)
+# - Production: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+# Host ports are deliberately not published here; each mode publishes its own.
 services:
   db:
     image: pgvector/pgvector:pg17
     container_name: multimodal-retrieval-db
     restart: unless-stopped
     environment:
-      POSTGRES_DB: multimodal_retrieval
-      POSTGRES_USER: app_user
-      POSTGRES_PASSWORD: local_dev_password
-    ports:
-      - "127.0.0.1:5433:5432"
+      POSTGRES_DB: ${POSTGRES_DB:-multimodal_retrieval}
+      POSTGRES_USER: ${POSTGRES_USER:-app_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local_dev_password}
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U app_user -d multimodal_retrieval"]
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -21,13 +23,15 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
+      args:
+        TORCH_INDEX_URL: ${TORCH_INDEX_URL:-https://download.pytorch.org/whl/cpu}
+    restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql+psycopg://app_user:local_dev_password@db:5432/multimodal_retrieval
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-app_user}:${POSTGRES_PASSWORD:-local_dev_password}@db:5432/${POSTGRES_DB:-multimodal_retrieval}
       DATA_DIR: /app/data
       HF_HOME: /app/data/models
-      CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173
-    ports:
-      - "127.0.0.1:8001:8001"
+      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+      OCR_LANGUAGE: ${OCR_LANGUAGE:-eng}
     volumes:
       - ./data:/app/data
       - ./experiments/results:/app/experiments/results
@@ -39,12 +43,17 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+      start_period: 30s
+
   frontend:
     build:
       context: .
       dockerfile: frontend/Dockerfile
-    ports:
-      - "127.0.0.1:5173:80"
+    restart: unless-stopped
+    environment:
+      # Optional HTTP basic auth for the whole site (required in production).
+      BASIC_AUTH_USER: ${BASIC_AUTH_USER:-}
+      BASIC_AUTH_PASSWORD: ${BASIC_AUTH_PASSWORD:-}
     depends_on:
       backend:
         condition: service_healthy
