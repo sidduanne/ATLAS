@@ -13,18 +13,14 @@ from pathlib import Path
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import f1_score
-from sklearn.model_selection import GroupShuffleSplit
 
-from app.config import data_path
-from app.database import SessionLocal
-from app.services.learning import uncertainty
-from app.services.evaluation import grouped_split, learning_dataset
+from app.core import SessionLocal
+from app.services.learning import grouped_split, learning_dataset, uncertainty
 
 
 def simulate(x, y, train, test, budgets, seeds):
     records = []
     classes = sorted(set(y))
-    minimum = len(classes)
     for seed in range(seeds):
         rng = np.random.default_rng(seed)
         # Identical, disclosed class-balanced bootstrap for every strategy.

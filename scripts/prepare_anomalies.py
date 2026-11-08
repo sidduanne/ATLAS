@@ -7,7 +7,7 @@ import argparse
 import json
 from pathlib import Path
 
-from app.database import SessionLocal
+from app.core import SessionLocal
 from app.models import Passage
 
 

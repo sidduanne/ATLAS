@@ -1,0 +1,37 @@
+# Web deployment:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+# Caddy is the only public entry point (ports 80/443, automatic HTTPS). A real database
+# password and a site login are required.
+services:
+  db:
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+
+  backend:
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-app_user}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:-multimodal_retrieval}
+
+  frontend:
+    environment:
+      BASIC_AUTH_USER: ${BASIC_AUTH_USER:?Set BASIC_AUTH_USER in .env}
+      BASIC_AUTH_PASSWORD: ${BASIC_AUTH_PASSWORD:?Set BASIC_AUTH_PASSWORD in .env}
+
+  caddy:
+    image: caddy:2.8-alpine
+    restart: unless-stopped
+    # SITE_ADDRESS: a domain name (e.g. atlas.example.com) enables automatic HTTPS;
+    # ":80" serves plain HTTP (e.g. a raw IP or behind another TLS proxy).
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    command: caddy reverse-proxy --from ${SITE_ADDRESS:-:80} --to frontend:80
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+
+volumes:
+  caddy_data:
+  caddy_config:
