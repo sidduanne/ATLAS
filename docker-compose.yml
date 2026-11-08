@@ -1,7 +1,7 @@
 # ATLAS runs entirely in Docker. Nothing besides Docker is needed on the host.
-# - On your machine: docker compose up -d --build        (also loads docker-compose.override.yml)
+# - On your machine: docker compose up -d --build                      -> http://127.0.0.1:5173
 # - On a web server: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
-# Host ports are deliberately not published here; each mode publishes its own.
+# Only the web app is published, and only on 127.0.0.1; the database and backend stay inside Docker.
 services:
   db:
     image: pgvector/pgvector:pg17
@@ -57,6 +57,8 @@ services:
       # Optional HTTP basic auth for the whole site (required in production).
       BASIC_AUTH_USER: ${BASIC_AUTH_USER:-}
       BASIC_AUTH_PASSWORD: ${BASIC_AUTH_PASSWORD:-}
+    ports:
+      - "127.0.0.1:${ATLAS_PORT:-5173}:80"
     depends_on:
       backend:
         condition: service_healthy

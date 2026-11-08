@@ -27,8 +27,6 @@ experiments/results/
 # Frontend and local assets
 node_modules/
 frontend/dist/
-data/sources/
-data/models/
 *.tsbuildinfo
 
 # Database dumps

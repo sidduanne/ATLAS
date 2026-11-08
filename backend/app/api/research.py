@@ -14,11 +14,10 @@ from pydantic import BaseModel, Field, StringConstraints
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.config import RESULTS_DIR, ROOT
-from app.dependencies import get_db
+from app.core import RESULTS_DIR, ROOT, get_db
 from app.models import Document, EvaluationCandidate, EvaluationQuery, Figure, Passage, ReviewLabel, SourceAsset
 from app.services import search
-from app.services.evaluation import grouped_split, learning_dataset
+from app.services.learning import grouped_split, learning_dataset
 
 router = APIRouter(prefix="/api/v1/research", tags=["Research evaluation"])
 

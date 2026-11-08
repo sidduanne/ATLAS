@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ArrowUpRight, BookOpen, FileText, Upload } from 'lucide-react';
-import PageHeading from '../components/PageHeading';
-import { api, message, upload, type Doc, type Notify, type OcrTarget, type Result } from '../api';
+import { PageHeading } from './ui';
+import { api, message, upload, type Doc, type Notify, type OcrTarget, type Result } from './api';
 
 type Props = {
   docs: Doc[];

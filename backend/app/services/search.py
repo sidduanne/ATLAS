@@ -4,9 +4,9 @@ from collections import defaultdict, deque
 
 from sqlalchemy import func, select
 
-from app.errors import UserError
+from app.core import UserError
 from app.models import Document, Figure, Passage
-from app.services import clip, embeddings
+from app.services import encoders
 
 # (path, milliseconds, status) of the last 1000 search/chat requests in this process.
 LATENCIES: deque = deque(maxlen=1000)
@@ -39,7 +39,7 @@ def _clean(query: str) -> str:
 
 def semantic(db, query, limit) -> list[dict]:
     """Sentence-BERT cosine similarity over passage embeddings."""
-    distance = Passage.embedding.cosine_distance(embeddings.embed_query(_clean(query))).label("distance")
+    distance = Passage.embedding.cosine_distance(encoders.embed_query(_clean(query))).label("distance")
     rows = db.execute(select(Passage, Document, distance).join(Document, Passage.document_id == Document.id)
                       .where(Passage.embedding.is_not(None)).order_by(distance, Passage.id).limit(limit)).all()
     return [_passage_result(p, d, distance=float(dist), similarity=1.0 - float(dist)) for p, d, dist in rows]
@@ -73,7 +73,7 @@ def hybrid(db, query, limit) -> list[dict]:
 
 def images(db, query, limit) -> list[dict]:
     """CLIP text-to-image similarity over figure embeddings."""
-    distance = Figure.embedding.cosine_distance(clip.embed_image_query(_clean(query))).label("distance")
+    distance = Figure.embedding.cosine_distance(encoders.embed_image_query(_clean(query))).label("distance")
     rows = db.execute(select(Figure, Document, distance).join(Document, Figure.document_id == Document.id)
                       .where(Figure.embedding.is_not(None)).order_by(distance, Figure.id).limit(limit)).all()
     return [{**item_payload(f, "figure", d), "figure_id": f.id, "similarity": 1 - float(dist)} for f, d, dist in rows]

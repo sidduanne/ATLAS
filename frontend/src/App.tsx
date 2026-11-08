@@ -1,18 +1,16 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
 import { ChevronRight, Plus, X } from 'lucide-react';
 import './style.css';
 import { api, message, type Analytics, type Doc, type Notify, type OcrTarget, type Result, type Tab } from './api';
-import Sidebar from './components/Sidebar';
-import ImageTextDialog from './dialogs/ImageTextDialog';
-import PreviewDialog from './dialogs/PreviewDialog';
-import ProvenanceEditor from './dialogs/ProvenanceEditor';
-import UploadDialog from './dialogs/UploadDialog';
-import ExperimentsPage from './pages/ExperimentsPage';
-import LibraryPage from './pages/LibraryPage';
-import ReviewPage from './pages/ReviewPage';
-import SearchPage, { type ResultsView } from './pages/SearchPage';
+import { ImageTextDialog, PreviewDialog, ProvenanceEditor, UploadDialog } from './dialogs';
+import ExperimentsPage from './ExperimentsPage';
+import LibraryPage from './LibraryPage';
+import ReviewPage from './ReviewPage';
+import SearchPage, { type ResultsView } from './SearchPage';
+import { Sidebar } from './ui';
 
-export default function App() {
+function App() {
   const [tab, setTab] = useState<Tab>('Search');
   const [stats, setStats] = useState<Analytics | null>(null);
   const [docs, setDocs] = useState<Doc[]>([]);
@@ -81,3 +79,5 @@ export default function App() {
     </div>
   );
 }
+
+createRoot(document.getElementById('root')!).render(<App />);

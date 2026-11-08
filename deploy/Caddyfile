@@ -1,7 +1,0 @@
-{$SITE_ADDRESS} {
-	encode gzip
-	request_body {
-		max_size 500MB
-	}
-	reverse_proxy frontend:80
-}

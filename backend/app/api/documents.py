@@ -12,12 +12,10 @@ from pydantic import BaseModel, Field, HttpUrl
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.config import MAX_BATCH_BYTES, MAX_BATCH_FILES, MAX_IMAGE_BYTES, MAX_PDF_BYTES, MB, data_path
-from app.dependencies import get_db
-from app.errors import UserError
+from app.core import MAX_BATCH_BYTES, MAX_BATCH_FILES, MAX_IMAGE_BYTES, MAX_PDF_BYTES, MB, UserError, data_path, get_db
 from app.models import Document, Figure, ImageText, Passage, SourceAsset
-from app.services.assets import attach_pdf, owned_files
-from app.services.ingestion import index_image_text, ingest_image, ingest_pdf, ingest_text, load_image, ocr_payload
+from app.services.ingestion import (attach_pdf, index_image_text, ingest_image, ingest_pdf, ingest_text, load_image,
+                                    ocr_payload, owned_files)
 from app.services.search import item_payload
 
 router = APIRouter(prefix="/api/v1", tags=["Documents"])

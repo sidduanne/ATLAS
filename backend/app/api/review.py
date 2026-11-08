@@ -8,8 +8,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.config import LABELS, RESULTS_DIR
-from app.dependencies import get_db
+from app.core import LABELS, RESULTS_DIR, get_db
 from app.models import Document, Figure, Passage, ReviewEvent, ReviewLabel, SourceAsset
 from app.services.learning import MODELS, fit_classifier, rank_candidates, training_data
 from app.services.search import LATENCIES, item_payload

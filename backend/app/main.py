@@ -9,9 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api import documents, research, review, search
-from app.config import CORS_ORIGINS, MAX_BATCH_BYTES, MAX_BATCH_FILES, MAX_PDF_BYTES, MB
-from app.dependencies import get_db
-from app.errors import UserError
+from app.core import CORS_ORIGINS, MAX_BATCH_BYTES, MAX_BATCH_FILES, MAX_PDF_BYTES, MB, UserError, get_db
 from app.models import SourceAsset
 from app.services.search import LATENCIES
 

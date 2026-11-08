@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ArrowUpRight, FileText, Image as ImageIcon, Layers, LoaderCircle, MessageSquare, Search, ShieldCheck } from 'lucide-react';
-import PageHeading from '../components/PageHeading';
-import { api, json, message, METHOD_NAMES, type Analytics, type Method, type Notify, type OcrTarget, type Result } from '../api';
+import { PageHeading } from './ui';
+import { api, json, message, METHOD_NAMES, type Analytics, type Method, type Notify, type OcrTarget, type Result } from './api';
 
 /** Results currently shown: a search, or a document's passages opened from Library. */
 export type ResultsView = { results: Result[]; elapsed: number | null };

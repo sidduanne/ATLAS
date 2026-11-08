@@ -6,9 +6,8 @@ from pathlib import Path
 
 from sqlalchemy import select
 
-from app.config import data_path
-from app.database import SessionLocal
-from app.models import Document, SourceAsset
+from app.core import SessionLocal
+from app.models import SourceAsset
 from app.services.ingestion import ingest_pdf
 
 

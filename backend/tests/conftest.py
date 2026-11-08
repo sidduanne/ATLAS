@@ -8,11 +8,11 @@ from fastapi.testclient import TestClient
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.database import Base, engine
-from app.dependencies import get_db
-from app.main import app
-import app.config
-import app.models
+import app.core
+import app.main
+import app.models  # noqa: F401  (registers every table on Base)
+import app.services.encoders
+from app.core import Base, engine, get_db
 
 
 def vector(value, dimension=384):
@@ -28,7 +28,7 @@ def db(tmp_path, monkeypatch):
         conn.execute(text(f'CREATE SCHEMA "{schema}"'))
     test_engine = engine.execution_options(schema_translate_map={None: schema})
     Base.metadata.create_all(test_engine)
-    monkeypatch.setattr(app.config, "DATA_DIR", tmp_path)
+    monkeypatch.setattr(app.core, "DATA_DIR", tmp_path)
     try:
         with Session(test_engine) as session:
             yield session
@@ -39,14 +39,12 @@ def db(tmp_path, monkeypatch):
 
 @pytest.fixture
 def client(db, monkeypatch):
-    import app.main
-    import app.services.clip
-    import app.services.embeddings
-    # Every caller goes through these two modules, so patching them replaces all encoders.
-    monkeypatch.setattr(app.services.embeddings, "embed_texts", lambda texts: [vector(t) for t in texts])
-    monkeypatch.setattr(app.services.embeddings, "embed_query", vector)
-    monkeypatch.setattr(app.services.clip, "embed_images", lambda images: [vector(str(i), 512) for i, _ in enumerate(images)])
-    monkeypatch.setattr(app.services.clip, "embed_image_query", lambda q: vector("0", 512))
+    # Every caller goes through app.services.encoders, so patching it replaces all models.
+    encoders = app.services.encoders
+    monkeypatch.setattr(encoders, "embed_texts", lambda texts: [vector(t) for t in texts])
+    monkeypatch.setattr(encoders, "embed_query", vector)
+    monkeypatch.setattr(encoders, "embed_images", lambda images: [vector(str(i), 512) for i, _ in enumerate(images)])
+    monkeypatch.setattr(encoders, "embed_image_query", lambda q: vector("0", 512))
     def session_override():
         try:
             yield db

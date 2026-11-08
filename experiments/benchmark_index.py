@@ -11,9 +11,9 @@ from time import perf_counter
 import numpy as np
 from sqlalchemy import select, text
 
-from app.database import SessionLocal, engine
+from app.core import SessionLocal, engine
 from app.models import Passage
-from app.services.embeddings import embed_query
+from app.services.encoders import embed_query
 
 
 def main():

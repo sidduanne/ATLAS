@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel, Field, StringConstraints
 from sqlalchemy.orm import Session
 
-from app.dependencies import get_db
+from app.core import get_db
 from app.services import search
 
 router = APIRouter(prefix="/api/v1", tags=["Search"])

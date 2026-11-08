@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowUpRight, Check, ChevronRight, FlaskConical, LoaderCircle, ShieldCheck } from 'lucide-react';
-import PageHeading from '../components/PageHeading';
-import { api, json, LABELS, message, pretty, type ItemType, type Notify, type Result } from '../api';
+import { PageHeading } from './ui';
+import { api, json, LABELS, message, pretty, type ItemType, type Notify, type Result } from './api';
 
 type Queue = { results: Result[]; classifier_ready: boolean; strategy: string; labeled_count: number; remaining: number };
 type Label = { item_type: ItemType; item_id: number; label: string; note: string };

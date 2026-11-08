@@ -10,8 +10,8 @@ WORKDIR /app
 # build with TORCH_INDEX_URL=https://download.pytorch.org/whl/cu124
 ARG TORCH_INDEX_URL=https://download.pytorch.org/whl/cpu
 RUN pip install --index-url "$TORCH_INDEX_URL" "torch>=2.2,<3"
-COPY backend/requirements.txt backend/requirements-dev.txt ./backend/
-RUN pip install -r backend/requirements-dev.txt
+COPY backend/requirements.txt ./backend/
+RUN pip install -r backend/requirements.txt
 
 # Bake both frozen encoders (~700 MB) into the image so the first search is fast
 # and the server needs no model downloads at runtime. PRELOAD_MODELS=0 skips this.
@@ -32,4 +32,4 @@ COPY scripts ./scripts
 ENV PYTHONPATH=/app/backend DATA_DIR=/app/data
 EXPOSE 8001
 # One worker on purpose: experiment-job tracking and latency stats are process-local.
-CMD ["sh", "-c", "python backend/init_db.py --indexes && exec uvicorn app.main:app --host 0.0.0.0 --port 8001 --proxy-headers --forwarded-allow-ips='*'"]
+CMD ["sh", "-c", "python -c 'from app.models import init_db; init_db()' && exec uvicorn app.main:app --host 0.0.0.0 --port 8001 --proxy-headers --forwarded-allow-ips='*'"]
