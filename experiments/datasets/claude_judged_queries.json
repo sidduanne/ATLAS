@@ -1,0 +1,496 @@
+{
+  "version": 1,
+  "judged_by": "Claude (LLM-as-judge), claude-opus-5-5",
+  "judgments_verified": false,
+  "notes": "Relevance judged by Claude (LLM-as-judge); not human-verified. Queries were written from paper abstracts and image subjects before any search was run. Each query's pool is the union of the top 5 from keyword, semantic and hybrid search (text) or CLIP (image), judged by reading every pooled passage or viewing every pooled figure. Relevant = substantively addresses the query; title/author blocks, reference lists, prompt templates and unreadable figure dumps were judged not relevant. Recall counts only the judged pool. The same pools remain unjudged in the app for human judging.",
+  "queries": [
+    {
+      "id": "T2",
+      "query": "How can dense retrieval embeddings be compressed to save storage without losing relevance?",
+      "modality": "text",
+      "relevant_passage_ids": [
+        58,
+        61,
+        67,
+        72
+      ],
+      "pooled_candidate_ids": [
+        58,
+        60,
+        61,
+        67,
+        71,
+        72,
+        85,
+        520
+      ]
+    },
+    {
+      "id": "T3",
+      "query": "Recommending the next item when user interaction data cannot be shared between business domains",
+      "modality": "text",
+      "relevant_passage_ids": [
+        142,
+        144,
+        147,
+        148,
+        149,
+        150,
+        184
+      ],
+      "pooled_candidate_ids": [
+        141,
+        142,
+        144,
+        147,
+        148,
+        149,
+        150,
+        182,
+        183,
+        184
+      ]
+    },
+    {
+      "id": "T4",
+      "query": "Reducing hallucinated claims in retrieval-augmented generation with multiple cooperating agents",
+      "modality": "text",
+      "relevant_passage_ids": [
+        264,
+        269,
+        274,
+        282,
+        311,
+        332
+      ],
+      "pooled_candidate_ids": [
+        264,
+        269,
+        274,
+        282,
+        305,
+        307,
+        311,
+        320,
+        332,
+        340
+      ]
+    },
+    {
+      "id": "T5",
+      "query": "Selecting hard negative training examples for dense retrievers using domain rules",
+      "modality": "text",
+      "relevant_passage_ids": [
+        333,
+        337,
+        338,
+        339,
+        343,
+        346,
+        347,
+        348
+      ],
+      "pooled_candidate_ids": [
+        333,
+        335,
+        337,
+        338,
+        339,
+        340,
+        343,
+        346,
+        347,
+        348
+      ]
+    },
+    {
+      "id": "T6",
+      "query": "Searching documents across the official languages of Timor-Leste",
+      "modality": "text",
+      "relevant_passage_ids": [
+        449,
+        451,
+        452,
+        456
+      ],
+      "pooled_candidate_ids": [
+        449,
+        451,
+        452,
+        456,
+        484,
+        1517
+      ]
+    },
+    {
+      "id": "T7",
+      "query": "Finding a suitable dataset from a natural-language description of the analysis task",
+      "modality": "text",
+      "relevant_passage_ids": [
+        498,
+        499,
+        503
+      ],
+      "pooled_candidate_ids": [
+        498,
+        499,
+        503,
+        545,
+        546,
+        1461,
+        2018
+      ]
+    },
+    {
+      "id": "T8",
+      "query": "Predicting future events in temporal knowledge graphs from historical facts",
+      "modality": "text",
+      "relevant_passage_ids": [
+        570,
+        599,
+        616
+      ],
+      "pooled_candidate_ids": [
+        570,
+        599,
+        601,
+        603,
+        604,
+        606,
+        615,
+        616
+      ]
+    },
+    {
+      "id": "T9",
+      "query": "Can large language models reliably assess the quality of replies to online hate speech?",
+      "modality": "text",
+      "relevant_passage_ids": [
+        859,
+        863,
+        865,
+        867
+      ],
+      "pooled_candidate_ids": [
+        859,
+        863,
+        865,
+        867,
+        874,
+        915,
+        920,
+        928,
+        929,
+        1321
+      ]
+    },
+    {
+      "id": "T10",
+      "query": "Why do language models fail on long contexts that contain competing distractor statements?",
+      "modality": "text",
+      "relevant_passage_ids": [
+        992,
+        993,
+        997,
+        998,
+        1016
+      ],
+      "pooled_candidate_ids": [
+        992,
+        993,
+        997,
+        998,
+        1016,
+        1018,
+        1020,
+        1021,
+        1033,
+        1034
+      ]
+    },
+    {
+      "id": "T11",
+      "query": "Do system rankings change when a different LLM judge is used instead of human votes?",
+      "modality": "text",
+      "relevant_passage_ids": [
+        1126,
+        1127,
+        1128,
+        1130,
+        1131
+      ],
+      "pooled_candidate_ids": [
+        1126,
+        1127,
+        1128,
+        1130,
+        1131,
+        1151
+      ]
+    },
+    {
+      "id": "T12",
+      "query": "Why do AI-generated text detectors fail under domain shift, and how can explainability show it?",
+      "modality": "text",
+      "relevant_passage_ids": [
+        1360,
+        1363,
+        1364,
+        1377,
+        1378,
+        1380,
+        1399
+      ],
+      "pooled_candidate_ids": [
+        1360,
+        1363,
+        1364,
+        1366,
+        1368,
+        1377,
+        1378,
+        1380,
+        1399
+      ]
+    },
+    {
+      "id": "T13",
+      "query": "Extracting structured information from criminal court verdicts with LLMs",
+      "modality": "text",
+      "relevant_passage_ids": [
+        1425,
+        1427,
+        1428,
+        1430
+      ],
+      "pooled_candidate_ids": [
+        1424,
+        1425,
+        1427,
+        1428,
+        1430,
+        1457
+      ]
+    },
+    {
+      "id": "T14",
+      "query": "Merging fine-tuned LoRA experts that were trained with different ranks",
+      "modality": "text",
+      "relevant_passage_ids": [
+        1803,
+        1804,
+        1805,
+        1808,
+        1812,
+        1823,
+        1824
+      ],
+      "pooled_candidate_ids": [
+        1803,
+        1804,
+        1805,
+        1808,
+        1812,
+        1823,
+        1824
+      ]
+    },
+    {
+      "id": "T15",
+      "query": "Anomaly detection in multivariate sensor time series using pretrained graph models",
+      "modality": "text",
+      "relevant_passage_ids": [
+        1844,
+        1860
+      ],
+      "pooled_candidate_ids": [
+        1844,
+        1860,
+        1907,
+        1908,
+        1909,
+        1910,
+        1911
+      ]
+    },
+    {
+      "id": "T16",
+      "query": "Continual learning without replay for classifying radio modulation types",
+      "modality": "text",
+      "relevant_passage_ids": [
+        1974,
+        1976,
+        1977,
+        1978,
+        1980,
+        2017
+      ],
+      "pooled_candidate_ids": [
+        1974,
+        1976,
+        1977,
+        1978,
+        1980,
+        2017,
+        2022,
+        2023
+      ]
+    },
+    {
+      "id": "T17",
+      "query": "Calibrated error bars and out-of-distribution alarms for fusion plasma stability surrogates",
+      "modality": "text",
+      "relevant_passage_ids": [
+        1768,
+        1769,
+        1770,
+        1771,
+        1783,
+        1789
+      ],
+      "pooled_candidate_ids": [
+        1768,
+        1769,
+        1770,
+        1771,
+        1783,
+        1789,
+        1800
+      ]
+    },
+    {
+      "id": "T18",
+      "query": "Defending tool-using LLM agents against indirect prompt injection",
+      "modality": "text",
+      "relevant_passage_ids": [
+        1707,
+        1708,
+        1718,
+        1721,
+        1722,
+        1735,
+        1753
+      ],
+      "pooled_candidate_ids": [
+        463,
+        1196,
+        1707,
+        1708,
+        1718,
+        1721,
+        1722,
+        1735,
+        1753,
+        1757
+      ]
+    },
+    {
+      "id": "T19",
+      "query": "What happens when generative models are repeatedly trained on outputs of earlier models?",
+      "modality": "text",
+      "relevant_passage_ids": [
+        2031,
+        2038,
+        2041,
+        2043,
+        2059
+      ],
+      "pooled_candidate_ids": [
+        686,
+        2031,
+        2038,
+        2041,
+        2043,
+        2045,
+        2059,
+        2072,
+        2075
+      ]
+    },
+    {
+      "id": "I20",
+      "query": "diagram of a transformer encoder-decoder architecture with attention layers",
+      "modality": "image",
+      "relevant_figure_ids": [],
+      "pooled_candidate_ids": [
+        96,
+        97,
+        113,
+        293,
+        296
+      ]
+    },
+    {
+      "id": "I21",
+      "query": "ROC curve plotting true positive rate against false positive rate",
+      "modality": "image",
+      "relevant_figure_ids": [
+        287
+      ],
+      "pooled_candidate_ids": [
+        136,
+        231,
+        237,
+        287,
+        297
+      ]
+    },
+    {
+      "id": "I22",
+      "query": "convolutional neural network with convolution and max pooling layers",
+      "modality": "image",
+      "relevant_figure_ids": [
+        288
+      ],
+      "pooled_candidate_ids": [
+        111,
+        114,
+        180,
+        288,
+        291
+      ]
+    },
+    {
+      "id": "I23",
+      "query": "confusion matrix table with precision and recall",
+      "modality": "image",
+      "relevant_figure_ids": [],
+      "pooled_candidate_ids": [
+        131,
+        261,
+        272,
+        273,
+        278
+      ]
+    },
+    {
+      "id": "I24",
+      "query": "LSTM recurrent cell diagram with input, forget and output gates",
+      "modality": "image",
+      "relevant_figure_ids": [
+        293
+      ],
+      "pooled_candidate_ids": [
+        96,
+        97,
+        112,
+        113,
+        293
+      ],
+      "note": "Figure 293 is the LSTM cell diagram; its transparent PNG renders on black, so the cell lines are lost (a rendering defect, still judged relevant)."
+    },
+    {
+      "id": "I25",
+      "query": "scatter plot of points grouped into clusters by k-means",
+      "modality": "image",
+      "relevant_figure_ids": [],
+      "pooled_candidate_ids": [
+        5,
+        231,
+        238,
+        292,
+        297
+      ]
+    }
+  ]
+}
