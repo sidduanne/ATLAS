@@ -1,0 +1,34 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Local document data
+data/pdfs/*
+data/figures/*
+data/processed/*
+!data/pdfs/.gitkeep
+!data/figures/.gitkeep
+!data/processed/.gitkeep
+
+# Generated experiment results
+experiments/results/
+
+# Logs and OS files
+*.log
+.DS_Store
+
+# Frontend and local assets
+node_modules/
+frontend/dist/
+data/sources/
+data/models/
+*.tsbuildinfo

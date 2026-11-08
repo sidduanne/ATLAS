@@ -1,0 +1,8 @@
+{
+  "judgments_verified": false,
+  "notes": "Replace placeholders with real database IDs after independent manual judging; never mark these verified without review.",
+  "queries": [
+    {"id": "T1", "modality": "text", "query": "How does uncertainty sampling work?", "relevant_passage_ids": []},
+    {"id": "I1", "modality": "image", "query": "A diagram of an active learning loop", "relevant_figure_ids": []}
+  ]
+}

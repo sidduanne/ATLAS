@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "notes": "Initial judgments are provisional and must be manually reviewed.",
+  "queries": [
+    {
+      "id": "Q1",
+      "query": "How does DCT coefficient retention affect signal reconstruction error compared with DFT and DST?",
+      "relevant_passage_ids": [9, 10, 11, 12],
+      "topic": "signal reconstruction"
+    },
+    {
+      "id": "Q2",
+      "query": "How does the system prioritize uncertain examples for human review using active learning?",
+      "relevant_passage_ids": [1, 2, 3, 4],
+      "topic": "active learning"
+    },
+    {
+      "id": "Q3",
+      "query": "How do DFT DCT and DST represent the frequency components of continuous and discrete signals?",
+      "relevant_passage_ids": [5, 6, 7, 8],
+      "topic": "frequency transforms"
+    }
+  ]
+}

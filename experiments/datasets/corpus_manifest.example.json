@@ -1,0 +1,6 @@
+{
+  "notes": "Use PDFs whose individual license permits reuse. arXiv hosting alone does not establish a reuse license.",
+  "documents": [
+    {"path": "../../data/pdfs/your-licensed-paper.pdf", "source_url": "https://example.org/paper", "license": "REPLACE with the actual source license"}
+  ]
+}
