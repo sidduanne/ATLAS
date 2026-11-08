@@ -10,7 +10,6 @@ services:
   backend:
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-app_user}:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:-multimodal_retrieval}
-      CORS_ORIGINS: ${CORS_ORIGINS:-}
 
   frontend:
     environment:

@@ -1,6 +1,6 @@
-# Base stack shared by local Docker runs and web deployment.
-# - Local:      docker compose up --build            (also loads docker-compose.override.yml)
-# - Production: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+# ATLAS runs entirely in Docker. Nothing besides Docker is needed on the host.
+# - On your machine: docker compose up -d --build        (also loads docker-compose.override.yml)
+# - On a web server: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
 # Host ports are deliberately not published here; each mode publishes its own.
 services:
   db:
@@ -25,16 +25,19 @@ services:
       dockerfile: backend/Dockerfile
       args:
         TORCH_INDEX_URL: ${TORCH_INDEX_URL:-https://download.pytorch.org/whl/cpu}
+        PRELOAD_MODELS: ${PRELOAD_MODELS:-1}
     restart: unless-stopped
     environment:
       DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-app_user}:${POSTGRES_PASSWORD:-local_dev_password}@db:5432/${POSTGRES_DB:-multimodal_retrieval}
-      DATA_DIR: /app/data
-      HF_HOME: /app/data/models
-      CORS_ORIGINS: ${CORS_ORIGINS:-http://localhost:5173,http://127.0.0.1:5173}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
       OCR_LANGUAGE: ${OCR_LANGUAGE:-eng}
     volumes:
-      - ./data:/app/data
-      - ./experiments/results:/app/experiments/results
+      # Uploaded sources, figure crops and (if not preloaded) model downloads.
+      - atlas_data:/app/data
+      # Experiment reports shown on the Experiments page.
+      - atlas_results:/app/experiments/results
+      # Read-only drop folder for bulk imports with scripts/import_corpus.py.
+      - ./data/pdfs:/app/import:ro
     depends_on:
       db:
         condition: service_healthy
@@ -43,7 +46,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
-      start_period: 30s
+      start_period: 60s
 
   frontend:
     build:
@@ -60,3 +63,5 @@ services:
 
 volumes:
   postgres_data:
+  atlas_data:
+  atlas_results:

@@ -12,12 +12,10 @@ __pycache__/
 !.env.example
 
 # Local document data
+data/*
+!data/pdfs/
 data/pdfs/*
-data/figures/*
-data/processed/*
 !data/pdfs/.gitkeep
-!data/figures/.gitkeep
-!data/processed/.gitkeep
 
 # Generated experiment results
 experiments/results/

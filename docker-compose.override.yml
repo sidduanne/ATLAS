@@ -1,12 +1,7 @@
-# Local development ports (loaded automatically by `docker compose` unless -f is used).
-# Everything binds to loopback only, so nothing is reachable from other machines.
+# Running on your own machine (loaded automatically by `docker compose`).
+# Only the web app is published, on loopback, so other machines cannot reach it.
+# Change ATLAS_PORT in .env if 5173 is already in use.
 services:
-  db:
-    ports:
-      - "127.0.0.1:5433:5432"
-  backend:
-    ports:
-      - "127.0.0.1:8001:8001"
   frontend:
     ports:
-      - "127.0.0.1:5173:80"
+      - "127.0.0.1:${ATLAS_PORT:-5173}:80"
